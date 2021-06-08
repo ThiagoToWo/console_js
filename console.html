@@ -27,9 +27,7 @@
 	</form>
 	Resultado: <input id='result' type='text' size='100' disabled></input>
 	<br/>
-	<textarea id='codigo' rows='24' cols='110' disabled> 
-		
-	</textarea>
+	<textarea id='codigo' rows='24' cols='112' disabled></textarea>
 	<script>
 		var script = document.getElementById('script');
 		var url = document.getElementById('url');
@@ -39,7 +37,7 @@
 		var cmd = [];
 		var index;
 		
-		url.onchange = function() {
+		url.onchange = function() { // Configurar script.
 			var file = this.files[0];
 			var leitor = new FileReader();
 			leitor.readAsDataURL(file);
@@ -57,38 +55,7 @@
 			}
 		}
 		
-		document.formCmd.onsubmit =  function() {
-			executarComando();
-			return false;
-		}
-		
-		window.addEventListener('keydown', function(e) {			
-			var tecla = e.keyCode;			
-			if (tecla == /*Up*/38) {
-				if (index > 0) index--;
-				var ultimo = cmd[index];
-				console.value = ultimo;
-			}
-		})
-		
-		window.addEventListener('keydown', function(e) {			
-			var tecla = e.keyCode;			
-			if (tecla == /*Down*/40) {
-				if (index < cmd.length - 1) index++;
-				var ultimo = cmd[index];
-				console.value = ultimo;
-			}
-		})
-		
-		function configurarScript() {			
-			script.src = url.value;
-			alert(script.src)
-			script.onerror = function() {
-				'Error: script ' + url.value + ' not found.';
-			}								
-		}
-		
-		function executarComando() {			
+		document.formCmd.onsubmit =  function() { // Executar comando.
 			cmd.push(console.value);
 			index = cmd.length;
 			var ultimo = cmd[index - 1];
@@ -99,7 +66,26 @@
 			} catch (e) {
 				result.value = e;
 			} 
+			return false;
 		}
+		
+		window.addEventListener('keydown', function(e) { // Voltar histórico.			
+			var tecla = e.keyCode;			
+			if (tecla == /*Up*/38) {
+				if (index > 0) index--;
+				var ultimo = cmd[index];
+				console.value = ultimo;
+			}
+		})
+		
+		window.addEventListener('keydown', function(e) { // Avançar histórico.			
+			var tecla = e.keyCode;			
+			if (tecla == /*Down*/40) {
+				if (index < cmd.length - 1) index++;
+				var ultimo = cmd[index];
+				console.value = ultimo;
+			}
+		})		
 	</script>
 </body>
 </html>
