@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Console</title>
+	<script id='script'></script>
+</head>
+<style>
+	body {
+		text-align: center;
+		font-size: 32pt;
+		background: #dff;
+	}
+	input, textarea {
+		font-size: 18pt;
+		color: orange;
+		background: black;
+	}
+	textarea {
+		resize: none;
+	}
+</style>
+<body>
+	Script (URL): <input id='url' type='file'></input>
+	<br/>
+	<form name='formCmd'>
+	Comando: <input id='console' type='text' size='100'></input>
+	</form>
+	Resultado: <input id='result' type='text' size='100' disabled></input>
+	<br/>
+	<textarea id='codigo' rows='24' cols='110' disabled> 
+		
+	</textarea>
+	<script>
+		var script = document.getElementById('script');
+		var url = document.getElementById('url');
+		var console = document.getElementById('console');
+		var result = document.getElementById('result');
+		var codigo = document.getElementById('codigo');
+		var cmd = [];
+		var index;
+		
+		url.onchange = function() {
+			var file = this.files[0];
+			var leitor = new FileReader();
+			leitor.readAsDataURL(file);
+			leitor.onload = function() {
+				script.src = leitor.result;
+				if (script.src) {
+					leitor.readAsText(file);
+					leitor.onload = function() {
+						codigo.value = leitor.result;
+					}
+				}
+			}
+			leitor.onerror = function() {
+				'Error: script ' + url.value + ' not found.';
+			}
+		}
+		
+		document.formCmd.onsubmit =  function() {
+			executarComando();
+			return false;
+		}
+		
+		window.addEventListener('keydown', function(e) {			
+			var tecla = e.keyCode;			
+			if (tecla == /*Up*/38) {
+				if (index > 0) index--;
+				var ultimo = cmd[index];
+				console.value = ultimo;
+			}
+		})
+		
+		window.addEventListener('keydown', function(e) {			
+			var tecla = e.keyCode;			
+			if (tecla == /*Down*/40) {
+				if (index < cmd.length - 1) index++;
+				var ultimo = cmd[index];
+				console.value = ultimo;
+			}
+		})
+		
+		function configurarScript() {			
+			script.src = url.value;
+			alert(script.src)
+			script.onerror = function() {
+				'Error: script ' + url.value + ' not found.';
+			}								
+		}
+		
+		function executarComando() {			
+			cmd.push(console.value);
+			index = cmd.length;
+			var ultimo = cmd[index - 1];
+			try {
+				var resultado = eval(ultimo);
+				result.value = resultado;
+				console.value = '';
+			} catch (e) {
+				result.value = e;
+			} 
+		}
+	</script>
+</body>
+</html>
